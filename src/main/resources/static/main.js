@@ -77,7 +77,7 @@ async function newUser() {
         }).then(() => {
             form.reset();
             allUsers();
-            $('#nav-users-tab').click();
+            $('#allUsersTable').click();
         })
     }
 
@@ -125,7 +125,6 @@ async function getUser(id) {
 }
 
 $(async function () {
-
     deleteUser();
 });
 
@@ -140,11 +139,25 @@ function deleteUser() {
             }
         })
             .then(() => {
+                $('#deleteModal').modal('hide')
                 allUsers();
-                $('#deleteModal').modal('hide');
             })
     })
 }
+
+function getAllRoles() {
+    return fetch("/admin/authorities")
+        .then((response) => {
+            let res = response.json();
+            return res;
+        })
+        .then((roles) => {
+            console.log('all roles:')
+            console.log(roles);
+            return roles;
+        })
+}
+
 
 $('#editModal').on('show.bs.modal', ev => {
     let button = $(ev.relatedTarget);
@@ -162,30 +175,36 @@ async function showEditModal(id) {
     form.age.value = user.age;
     form.password.value = user.password;
 
-    await fetch("http://localhost:8080/admin/authorities")
-        .then(res => res.json())
-        .then(roles => {
-            roles.forEach(role => {
-                let selectedRole = false;
-                for (let i = 0; i < user.roles.length; i++) {
-                    if (user.roles[i].name === role.name) {
-                        selectedRole = true;
-                        break;
-                    }
-                }
-                let el = document.createElement("option");
-                el.text = role.name.substring(5);
-                el.value = role.id;
-                if (selectedRole) el.selected = true;
-                $('#rolesEdit')[0].appendChild(el);
-            })
-        })
+    $("#rolesEdit").empty();
+    let selectEdit = document.getElementById('rolesEdit');
+    let allRoles = await getAllRoles();
+
+    allRoles.forEach((role) => {
+
+
+        let option = document.createElement('option');
+        option.setAttribute('value', role.name);
+        option.setAttribute('id', role.id);
+        option.setAttribute('name', role.name);
+        option.appendChild(document.createTextNode(role.name.substring(5)));
+        selectEdit.appendChild(option);
+        let selectedRole = false;
+        for (let i = 0; i < user.roles.length; i++) {
+            if (user.roles[i].name === role.name) {
+                selectedRole = true;
+                break;
+            }
+        }
+        if (selectedRole) option.selected = true
+    })
+
+
 }
 
-$(async function() {
+$(async function () {
     editUser();
-
 });
+
 function editUser() {
     const editForm = document.forms["editFormBody"];
     editForm.addEventListener("submit", ev => {
@@ -193,8 +212,8 @@ function editUser() {
         let editUserRoles = [];
         for (let i = 0; i < editForm.roles.options.length; i++) {
             if (editForm.roles.options[i].selected) editUserRoles.push({
-                id : editForm.roles.options[i].value,
-                name : "ROLE_" + editForm.roles.options[i].text
+                id: editForm.roles.options[i].value,
+                name: "ROLE_" + editForm.roles.options[i].text
             })
         }
 
@@ -213,31 +232,9 @@ function editUser() {
                 roles: editUserRoles
             })
         }).then(() => {
-            allUsers();
-            $('#editModal').modal('hide');
+            $('#editModal').modal('hide')
+            allUsers()
+
         })
     })
 }
-
-const triggerAllUsersTabList = document.querySelectorAll('#nav-tab > #nav-users-tab')
-triggerAllUsersTabList.forEach(triggerEl => {
-    const tabTrigger = new bootstrap.Tab(triggerEl)
-
-    triggerEl.addEventListener('click', event => {
-        event.preventDefault()
-        tabTrigger.show()
-    })
-})
-
-const triggerNewUserTabList = document.querySelectorAll('#nav-tab > #new-user-tab')
-triggerNewUserTabList.forEach(triggerEl => {
-    const tabTrigger = new bootstrap.Tab(triggerEl)
-
-    triggerEl.addEventListener('click', event => {
-        event.preventDefault()
-        tabTrigger.show()
-    })
-})
-
-
-

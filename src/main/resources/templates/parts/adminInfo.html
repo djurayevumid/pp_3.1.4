@@ -1,16 +1,13 @@
 <div th:fragment="adminInfo">
     <h1>Admin panel</h1>
-    <nav>
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <button class="nav-link active" id="nav-users-tab" data-bs-toggle="tab"
-                    data-bs-target="#nav-users" type="button" role="tab" aria-controls="nav-users"
-                    aria-selected="true">Users table
-            </button>
-            <button class="nav-link" id="new-user-tab" data-bs-toggle="tab" data-bs-target="#newUser"
-                    type="button" role="tab" aria-controls="newUser" aria-selected="false">New User
-            </button>
-        </div>
-    </nav>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" id="allUsersTable" href="#nav-users">Users table</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#newUser">New User</a>
+        </li>
+    </ul>
     <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-users" role="tabpanel"
              aria-labelledby="nav-users-tab">

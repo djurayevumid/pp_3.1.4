@@ -12,6 +12,7 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,7 +78,8 @@ public class RESTController {
     @GetMapping("/authorities")
     public ResponseEntity<List<Role>> getAllRoles() {
         List<Role> roles = roleService.getAllRoles();
-        return new ResponseEntity<>(roles, HttpStatus.OK);
+        List<Role> newRolesArray = roles.subList(0, 2);
+        return new ResponseEntity<>(newRolesArray, HttpStatus.OK);
     }
 
     private String getErrorsFromBindingResult(BindingResult bindingResult) {
